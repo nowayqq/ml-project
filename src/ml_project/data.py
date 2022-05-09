@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Tuple
+from pandas_profiling import ProfileReport
 from sklearn.model_selection import train_test_split
 
 import click
@@ -18,3 +19,7 @@ def get_data(
     )
     return features_train, features_val, target_train, target_val
 
+
+def generate_report(csv_path: Path):
+    return ProfileReport(pd.read_csv(
+        csv_path)).to_file("../../EDA_report.html")
