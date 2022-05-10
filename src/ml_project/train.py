@@ -2,6 +2,7 @@ import click
 
 from pathlib import Path
 from sklearn.metrics import accuracy_score
+from joblib import dump
 
 import data_split as ds
 import pipeline as pp
@@ -34,7 +35,7 @@ import pipeline as pp
 )
 @click.option(
     '--max-iter',
-    default=100,
+    default=1000,
     type=int,
     show_default=True
 )
@@ -44,8 +45,15 @@ import pipeline as pp
     type=float,
     show_default=True
 )
+@click.option(
+    '--save-model-path',
+    default="../../data/model.joblib",
+    type=click.Path(dir_okay=False, writable=True, path_type=Path),
+    show_default=True
+)
 def train(
         dataset_path: Path,
+        save_model_path: Path,
         random_state: int,
         test_split_ratio: float,
         max_iter: int,
@@ -61,3 +69,6 @@ def train(
     pipeline = pp.create_pipeline(max_iter, logreg_c, random_state)
     pipeline.fit(features_train, target_train)
     accuracy = accuracy_score(target_val, pipeline.predict(features_val))
+    click.echo(f'Accuracy: {accuracy}.')
+    dump(pipeline, save_model_path)
+    click.echo(f"Model is saved to {save_model_path}.")
