@@ -24,5 +24,5 @@ def get_data(
         features, target, test_size=test_split_ratio, random_state=random_state
     )
     if gen_rep:
-        generate_report(csv_path)
+        generate_report(data)
     return features_train, features_val, target_train, target_val

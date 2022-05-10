@@ -1,8 +1,10 @@
-from pathlib import Path
-
 import click
 
-from .data import get_data
+from pathlib import Path
+from sklearn.metrics import accuracy_score
+
+import data_split as ds
+import pipeline as pp
 
 
 @click.command()
@@ -30,15 +32,32 @@ from .data import get_data
     type=bool,
     show_default=True
 )
+@click.option(
+    '--max-iter',
+    default=100,
+    type=int,
+    show_default=True
+)
+@click.option(
+    '--logreg-c',
+    default=1.0,
+    type=float,
+    show_default=True
+)
 def train(
         dataset_path: Path,
         random_state: int,
         test_split_ratio: float,
+        max_iter: int,
+        logreg_c: float,
         gen_rep: bool,
 ) -> None:
-    features_train, features_val, target_train, target_val = get_data(
+    features_train, features_val, target_train, target_val = ds.get_data(
         dataset_path,
         random_state,
         test_split_ratio,
         gen_rep
     )
+    pipeline = pp.create_pipeline(max_iter, logreg_c, random_state)
+    pipeline.fit(features_train, target_train)
+    accuracy = accuracy_score(target_val, pipeline.predict(features_val))
