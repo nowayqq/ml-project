@@ -72,3 +72,6 @@ def train(
     click.echo(f'Accuracy: {accuracy}.')
     dump(pipeline, save_model_path)
     click.echo(f"Model is saved to {save_model_path}.")
+
+
+train()
